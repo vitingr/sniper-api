@@ -14,9 +14,9 @@ type Container struct {
 
 func NewContainer() *Container {
 	apiKey := os.Getenv("GOOGLE_API_KEY")
-    if apiKey == "" {
-        panic("GOOGLE_API_KEY is missing")
-    }
+	if apiKey == "" {
+		panic("GOOGLE_API_KEY is missing")
+	}
 
 	repo := google.NewGooglePlaceRepository(apiKey)
 	nearbyUC := company.NewGetNearbyCompaniesUseCase(repo)
