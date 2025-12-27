@@ -6,15 +6,23 @@ import (
 )
 
 type Company struct {
-	ID            string  `json:"id"`
-	Name          string  `json:"name"`
-	Address       string  `json:"address"`
-	Latitude      float64 `json:"latitude"`
-	Longitude     float64 `json:"longitude"`
-	EmployeeCount string  `json:"employee_count,omitempty"`
-	Revenue       string  `json:"revenue,omitempty"`
-	Industry      string  `json:"industry,omitempty"`
-	LinkedInURL   string  `json:"linkedin_url"`
+	// Google Places default data
+	ID             string   `json:"id"`
+	Name           string   `json:"name"`
+	Address        string   `json:"address"`
+	Latitude       float64  `json:"latitude"`
+	Longitude      float64  `json:"longitude"`
+	BusinessStatus string   `json:"business_status,omitempty"`
+	Types          []string `json:"types,omitempty"`
+	Website        string   `json:"website,omitempty"`
+	Phone          string   `json:"phone_number,omitempty"`
+	Summary        string   `json:"summary,omitempty"`
+
+	// Enrichment by Hunter.IO
+	EmployeeCount string `json:"employee_count,omitempty"`
+	Revenue       string `json:"revenue,omitempty"`
+	Industry      string `json:"industry,omitempty"`
+	LinkedInURL   string `json:"linkedin_url"`
 
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`

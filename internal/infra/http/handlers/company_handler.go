@@ -30,10 +30,13 @@ func (h *CompanyHandler) GetCompanies(c *gin.Context) {
 	latStr := c.Query("lat")
 	lngStr := c.Query("lng")
 	radiusStr := c.Query("radius")
+	fetchAllStr := c.DefaultQuery("fetch_all", "false")
+	pageToken := c.Query("page_token")
 
 	lat, errLat := strconv.ParseFloat(latStr, 64)
 	lng, errLng := strconv.ParseFloat(lngStr, 64)
 	radius, _ := strconv.ParseFloat(radiusStr, 64)
+	fetchAll, _ := strconv.ParseBool(fetchAllStr)
 
 	if errLat != nil || errLng != nil || lat == 0 || lng == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -46,6 +49,8 @@ func (h *CompanyHandler) GetCompanies(c *gin.Context) {
 		Latitude:  lat,
 		Longitude: lng,
 		RadiusKm:  radius,
+		FetchAll:  fetchAll,
+		PageToken: pageToken,
 	}
 	if input.RadiusKm <= 0 {
 		input.RadiusKm = 5.0 // Default 5km
@@ -57,9 +62,12 @@ func (h *CompanyHandler) GetCompanies(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"data": companies,
-	})
+	response := gin.H{
+		"data":  companies,
+		"total": len(companies),
+	}
+
+	c.JSON(http.StatusOK, response)
 }
 
 // GET /api/v1/companies/:id
