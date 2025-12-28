@@ -40,12 +40,14 @@ func (c *Contact) IsValid() error {
 	if c.CompanyID == 0 {
 		return errors.New("company_id is required")
 	}
+
 	if c.FirstName == "" {
-		return errors.New("first name is required")
+		return errors.New("First name is required")
 	}
 
-	if c.Email != "" && !strings.Contains(c.Email, "@") {
-		return errors.New("invalid email format")
+	if c.Email == "" && !strings.Contains(c.Email, "@") {
+		return errors.New("Invalid email format")
 	}
+
 	return nil
 }

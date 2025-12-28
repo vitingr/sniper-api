@@ -6,7 +6,6 @@ import (
 )
 
 type Company struct {
-	// Google Places default data
 	ID             string   `json:"id"`
 	Name           string   `json:"name"`
 	Address        string   `json:"address"`

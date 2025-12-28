@@ -114,7 +114,6 @@ func (r *googlePlaceRepo) GetNearby(ctx context.Context, lat, lng, radiusKm floa
 	return result.Companies, nil
 }
 
-// NOVO: Versão com suporte a paginação
 func (r *googlePlaceRepo) GetNearbyWithPagination(ctx context.Context, lat, lng, radiusKm float64, pageToken string) (*NearbyResult, error) {
 	endpoint := "https://maps.googleapis.com/maps/api/place/nearbysearch/json"
 	u, _ := url.Parse(endpoint)
@@ -136,10 +135,12 @@ func (r *googlePlaceRepo) GetNearbyWithPagination(ctx context.Context, lat, lng,
 	if err != nil {
 		return nil, err
 	}
+
 	resp, err := r.client.Do(req)
 	if err != nil {
 		return nil, err
 	}
+
 	defer resp.Body.Close()
 
 	var googleResp googleListResponse
