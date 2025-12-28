@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	entity "main.go/internal/domain/entities"
+	"main.go/internal/domain/entity"
 )
 
 // External services interfaces (Dependency Inversion)

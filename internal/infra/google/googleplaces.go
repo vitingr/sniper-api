@@ -8,8 +8,8 @@ import (
 	"net/url"
 	"time"
 
-	entity "main.go/internal/domain/entities"
-	repository "main.go/internal/domain/repositories"
+	entity "main.go/internal/domain/entity"
+	repository "main.go/internal/domain/repository"
 )
 
 type googlePlaceRepo struct {

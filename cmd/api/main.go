@@ -12,7 +12,7 @@ import (
 	"main.go/config"
 	"main.go/internal/di"
 	logger "main.go/pkg/logger"
-	router "main.go/internal/infra/http/router"
+	router "main.go/internal/adapter/http/router"
 )
 
 func main() {

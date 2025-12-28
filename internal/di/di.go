@@ -3,9 +3,9 @@ package di
 import (
 	"os"
 
+	"main.go/internal/adapter/http/handler"
 	"main.go/internal/infra/google"
-	handler "main.go/internal/infra/http/handlers"
-	company "main.go/internal/use-cases/companies"
+	company "main.go/internal/usecase/companies"
 )
 
 type Container struct {

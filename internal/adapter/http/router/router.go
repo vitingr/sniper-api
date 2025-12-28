@@ -2,8 +2,8 @@ package http
 
 import (
 	"github.com/gin-gonic/gin"
+	"main.go/internal/adapter/http/middleware"
 	"main.go/internal/di"
-	"main.go/internal/infra/http/middleware"
 )
 
 type Router struct {
@@ -28,7 +28,7 @@ func (r *Router) Setup() *gin.Engine {
 		c.JSON(200, gin.H{"status": "ok"})
 	})
 
-	v1 := r.engine.Group("/api/v1")
+	v1 := r.engine.Group("/v1")
 	{
 		companies := v1.Group("/companies")
 		{

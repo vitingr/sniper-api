@@ -3,7 +3,7 @@ package repository
 import (
 	"context"
 
-	entity "main.go/internal/domain/entities"
+	"main.go/internal/domain/entity"
 )
 
 type CompanyRepository interface {

@@ -6,7 +6,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	company "main.go/internal/use-cases/companies"
+	company "main.go/internal/usecase/companies"
 )
 
 type CompanyHandler struct {
