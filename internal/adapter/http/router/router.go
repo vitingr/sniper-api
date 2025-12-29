@@ -35,6 +35,14 @@ func (r *Router) Setup() *gin.Engine {
 			companies.GET("", r.container.CompanyHandler.GetCompanies)
 			companies.GET("/:id", r.container.CompanyHandler.GetCompany)
 		}
+		users := v1.Group("/users")
+		{
+			users.GET("", r.container.UserHandler.ListAllUsers)
+			users.GET("/:email", r.container.UserHandler.GetUserByEmail)
+			users.POST("", r.container.UserHandler.CreateUser)
+			users.PATCH("", r.container.UserHandler.UpdateUser)
+			users.DELETE("", r.container.UserHandler.DeleteUser)
+		}
 	}
 
 	return r.engine

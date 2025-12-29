@@ -1,4 +1,3 @@
-// internal/infrastructure/http/handler/company_handler.go
 package handler
 
 import (
@@ -24,7 +23,7 @@ func NewCompanyHandler(
 	}
 }
 
-// GET /api/v1/companies
+// GET /v1/companies
 // Example: ?lat=-23.5&lng=-46.6&radius=10
 func (h *CompanyHandler) GetCompanies(c *gin.Context) {
 	latStr := c.Query("lat")
@@ -70,7 +69,7 @@ func (h *CompanyHandler) GetCompanies(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
-// GET /api/v1/companies/:id
+// GET /v1/companies/:id
 func (h *CompanyHandler) GetCompany(c *gin.Context) {
 	id := c.Param("id")
 
