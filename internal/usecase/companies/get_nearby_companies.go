@@ -15,11 +15,11 @@ type GetNearbyInput struct {
 }
 
 type GetNearbyCompaniesUseCase struct {
-	repo repository.CompanyRepository
+	repository repository.CompanyRepository
 }
 
-func NewGetNearbyCompaniesUseCase(repo repository.CompanyRepository) *GetNearbyCompaniesUseCase {
-	return &GetNearbyCompaniesUseCase{repo: repo}
+func NewGetNearbyCompaniesUseCase(repository repository.CompanyRepository) *GetNearbyCompaniesUseCase {
+	return &GetNearbyCompaniesUseCase{repository: repository}
 }
 
 func (uc *GetNearbyCompaniesUseCase) Execute(ctx context.Context, input GetNearbyInput) ([]*entity.Company, error) {
@@ -29,9 +29,9 @@ func (uc *GetNearbyCompaniesUseCase) Execute(ctx context.Context, input GetNearb
 
 	// Se o usuário quer buscar todas as páginas (até 60 resultados)
 	if input.FetchAll {
-		return uc.repo.GetNearbyAll(ctx, input.Latitude, input.Longitude, input.RadiusKm)
+		return uc.repository.GetNearbyAll(ctx, input.Latitude, input.Longitude, input.RadiusKm)
 	}
 
 	// Comportamento padrão: retorna apenas primeira página (20 resultados)
-	return uc.repo.GetNearby(ctx, input.Latitude, input.Longitude, input.RadiusKm)
+	return uc.repository.GetNearby(ctx, input.Latitude, input.Longitude, input.RadiusKm)
 }

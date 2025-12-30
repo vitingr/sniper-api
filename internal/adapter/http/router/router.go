@@ -41,7 +41,20 @@ func (r *Router) Setup() *gin.Engine {
 			users.GET("/:email", r.container.UserHandler.GetUserByEmail)
 			users.POST("", r.container.UserHandler.CreateUser)
 			users.PATCH("", r.container.UserHandler.UpdateUser)
-			users.DELETE("", r.container.UserHandler.DeleteUser)
+			users.DELETE("/:email", r.container.UserHandler.DeleteUser)
+		}
+		auth := v1.Group("/auth")
+		{
+			auth.POST("/sso/login", r.container.AuthHandler.LoginUser)
+			auth.POST("/sso/logout", r.container.AuthHandler.LogoutUser)
+			auth.POST("/sso/refresh-token", r.container.AuthHandler.SSORefreshToken)
+		}
+		sessions := v1.Group("/sessions")
+		{
+			sessions.GET("/:id", r.container.SessionHandler.GetSession)
+			sessions.POST("", r.container.SessionHandler.CreateSession)
+			sessions.DELETE("/:id", r.container.SessionHandler.DeleteSession)
+			sessions.POST("/revoke/:id", r.container.SessionHandler.RevokeSession)
 		}
 	}
 

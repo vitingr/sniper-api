@@ -8,13 +8,13 @@ import (
 )
 
 type DeleteUserUseCase struct {
-	repo repository.UserRepository
+	repository repository.UserRepository
 }
 
-func NewDeleteUserUseCase(repo repository.UserRepository) *DeleteUserUseCase {
-	return &DeleteUserUseCase{repo: repo}
+func NewDeleteUserUseCase(repository repository.UserRepository) *DeleteUserUseCase {
+	return &DeleteUserUseCase{repository: repository}
 }
 
 func (uc *DeleteUserUseCase) Execute(ctx context.Context, email string) (*entity.User, error) {
-	return uc.repo.DeleteUser(ctx, email)
+	return uc.repository.DeleteUser(ctx, email)
 }

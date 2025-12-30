@@ -27,9 +27,9 @@ func (repository *UserRepository) CreateUser(ctx context.Context, user *entity.U
 	}
 
 	query := `
-		INSERT INTO users (name, email, password, profile_picture, created_at)
-		VALUES ($1, $2, $3, $4, $5)
-		RETURNING id, created_at
+		INSERT INTO users (name, email, password, profile_picture)
+		VALUES ($1, $2, $3, $4)
+		RETURNING *
 	`
 
 	return repository.db.QueryRow(

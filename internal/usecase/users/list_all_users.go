@@ -8,13 +8,13 @@ import (
 )
 
 type ListAllUsersUseCase struct {
-	repo repository.UserRepository
+	repository repository.UserRepository
 }
 
-func NewListAllUsersUseCase(repo repository.UserRepository) *ListAllUsersUseCase {
-	return &ListAllUsersUseCase{repo: repo}
+func NewListAllUsersUseCase(repository repository.UserRepository) *ListAllUsersUseCase {
+	return &ListAllUsersUseCase{repository: repository}
 }
 
 func (uc *ListAllUsersUseCase) Execute(ctx context.Context, email string) ([]*entity.User, error) {
-	return uc.repo.ListAllUsers(ctx, email)
+	return uc.repository.ListAllUsers(ctx, email)
 }

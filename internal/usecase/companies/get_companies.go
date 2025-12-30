@@ -2,6 +2,7 @@ package company
 
 import (
 	"context"
+
 	entity "main.go/internal/domain/entity"
 	repository "main.go/internal/domain/repository"
 )
@@ -12,11 +13,11 @@ type ListCompaniesInput struct {
 }
 
 type ListCompaniesUseCase struct {
-	repo repository.CompanyRepository
+	repository repository.CompanyRepository
 }
 
-func NewListCompaniesUseCase(repo repository.CompanyRepository) *ListCompaniesUseCase {
-	return &ListCompaniesUseCase{repo: repo}
+func NewListCompaniesUseCase(repository repository.CompanyRepository) *ListCompaniesUseCase {
+	return &ListCompaniesUseCase{repository: repository}
 }
 
 func (uc *ListCompaniesUseCase) Execute(ctx context.Context, input ListCompaniesInput) ([]*entity.Company, error) {
@@ -28,5 +29,5 @@ func (uc *ListCompaniesUseCase) Execute(ctx context.Context, input ListCompanies
 	// }
 	// offset := (input.Page - 1) * input.Limit
 
-	return uc.repo.Search(ctx, "")
+	return uc.repository.Search(ctx, "")
 }

@@ -8,13 +8,13 @@ import (
 )
 
 type GetUserByEmailUseCase struct {
-	repo repository.UserRepository
+	repository repository.UserRepository
 }
 
-func NewGetUserByEmailUseCase(repo repository.UserRepository) *GetUserByEmailUseCase {
-	return &GetUserByEmailUseCase{repo: repo}
+func NewGetUserByEmailUseCase(repository repository.UserRepository) *GetUserByEmailUseCase {
+	return &GetUserByEmailUseCase{repository: repository}
 }
 
 func (uc *GetUserByEmailUseCase) Execute(ctx context.Context, email string) (*entity.User, error) {
-	return uc.repo.GetUserByEmail(ctx, email)
+	return uc.repository.GetUserByEmail(ctx, email)
 }

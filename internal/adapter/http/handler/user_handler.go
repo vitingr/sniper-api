@@ -40,17 +40,18 @@ func NewUserHandler(
 	deleteUserUC *user.DeleteUserUseCase,
 ) *UserHandler {
 	return &UserHandler{
-		createUserUC: createUserUC,
+		createUserUC:     createUserUC,
 		getUserByEmailUC: getUserByEmailUC,
-		listAllUsersUC: listAllUsersUC,
-		updateUserUC: updateUserUC,
-		deleteUserUC: deleteUserUC,
+		listAllUsersUC:   listAllUsersUC,
+		updateUserUC:     updateUserUC,
+		deleteUserUC:     deleteUserUC,
 	}
 }
 
 // POST /v1/users
 func (h *UserHandler) CreateUser(c *gin.Context) {
 	var req CreateUserRequest
+
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -70,8 +71,8 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, gin.H{
-		"message": "User created successfully",
-		"user":    user,
+		"message": "User created successfully!",
+		"data":    user,
 	})
 }
 
@@ -89,7 +90,7 @@ func (h *UserHandler) ListAllUsers(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"users": users,
+		"data": users,
 		"count": len(users),
 	})
 }
@@ -113,7 +114,7 @@ func (h *UserHandler) GetUserByEmail(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"user": user})
+	c.JSON(http.StatusOK, gin.H{"data": user})
 }
 
 // PATCH /v1/users
@@ -139,8 +140,8 @@ func (h *UserHandler) UpdateUser(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": "User updated successfully",
-		"user":    user,
+		"message": "User updated successfully!",
+		"data":    user,
 	})
 }
 
@@ -149,22 +150,24 @@ func (h *UserHandler) DeleteUser(c *gin.Context) {
 	email := c.Param("email")
 
 	if email == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "email is required"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "email param is required"})
 		return
 	}
 
-	deletedUser, err := h.deleteUserUC.Execute(c.Request.Context(), email)
+	deleted_user, err := h.deleteUserUC.Execute(c.Request.Context(), email)
+
 	if err != nil {
 		if err.Error() == "User not found" {
 			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 			return
 		}
+
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"message": "User deleted successfully",
-		"user":    deletedUser,
+	c.JSON(http.StatusNoContent, gin.H{
+		"message": "User deleted successfully!",
+		"data":    deleted_user,
 	})
 }

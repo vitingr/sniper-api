@@ -7,13 +7,13 @@ import (
 )
 
 type GetCompanyByIDUseCase struct {
-	repo repository.CompanyRepository
+	repository repository.CompanyRepository
 }
 
-func NewGetCompanyByIDUseCase(repo repository.CompanyRepository) *GetCompanyByIDUseCase {
-	return &GetCompanyByIDUseCase{repo: repo}
+func NewGetCompanyByIDUseCase(repository repository.CompanyRepository) *GetCompanyByIDUseCase {
+	return &GetCompanyByIDUseCase{repository: repository}
 }
 
 func (uc *GetCompanyByIDUseCase) Execute(ctx context.Context, id string) (*entity.Company, error) {
-	return uc.repo.GetByID(ctx, id)
+	return uc.repository.GetByID(ctx, id)
 }

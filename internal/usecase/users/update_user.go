@@ -8,13 +8,13 @@ import (
 )
 
 type UpdateUserUseCase struct {
-	repo repository.UserRepository
+	repository repository.UserRepository
 }
 
-func NewUpdateUserUseCase(repo repository.UserRepository) *UpdateUserUseCase {
-	return &UpdateUserUseCase{repo: repo}
+func NewUpdateUserUseCase(repository repository.UserRepository) *UpdateUserUseCase {
+	return &UpdateUserUseCase{repository: repository}
 }
 
-func (uc *UpdateUserUseCase) Execute(ctx context.Context, input *entity.User) error {
-	return uc.repo.UpdateUser(ctx, input)
+func (uc *UpdateUserUseCase) Execute(ctx context.Context, payload *entity.User) error {
+	return uc.repository.UpdateUser(ctx, payload)
 }
