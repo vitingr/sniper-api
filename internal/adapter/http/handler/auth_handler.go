@@ -47,12 +47,12 @@ func (h *AuthHandler) LoginUser(c *gin.Context) {
 	response, err := h.loginUserUC.Execute(c.Request.Context(), credentials)
 
 	if err != nil {
-		logger.Error("Cannot login user")
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": "User logged successfully",
+		"message": "User logged successfully!",
 		"data":    response,
 	})
 }
@@ -69,7 +69,7 @@ func (h *AuthHandler) LogoutUser(c *gin.Context) {
 	err := h.logoutUserUC.Execute(c.Request.Context(), session_id)
 
 	if err != nil {
-		logger.Error("Cannot login user.")
+		logger.Error("Cannot login the user.")
 		return
 	}
 

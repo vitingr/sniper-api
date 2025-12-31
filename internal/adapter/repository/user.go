@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -20,22 +21,45 @@ func NewUserRepository(db *pgxpool.Pool) *UserRepository {
 }
 
 func (repository *UserRepository) CreateUser(ctx context.Context, user *entity.User) error {
-	hashed_password, err := util.HashPassword(user.Password)
+	var exists bool
+
+	checkQuery := `SELECT EXISTS(SELECT 1 FROM users WHERE email = $1)`
+	err := repository.db.QueryRow(ctx, checkQuery, user.Email).Scan(&exists)
 
 	if err != nil {
-		logger.Error("Error hashing password")
+		logger.Error("Error checking if user exists", "error", err)
+		return errors.New("Error checking if user exists")
+	}
+
+	if exists {
+		fmt.Printf("user with email %s already exists", user.Email)
+		return errors.New("User already exists")
+	}
+
+	hashed_password, err := util.HashPassword(user.Password)
+	if err != nil {
+		logger.Error("Error hashing password.")
+		return errors.New("Error hashing password.")
 	}
 
 	query := `
 		INSERT INTO users (name, email, password, profile_picture)
 		VALUES ($1, $2, $3, $4)
-		RETURNING *
+		RETURNING id, name, email, password, profile_picture, created_at, updated_at
 	`
 
-	return repository.db.QueryRow(
+return repository.db.QueryRow(
 		ctx, query,
-		user.Name, user.Email, hashed_password, user.ProfilePicture, user.CreatedAt,
-	).Scan(&user.ID, &user.CreatedAt)
+		user.Name, user.Email, hashed_password, user.ProfilePicture,
+	).Scan(
+		&user.ID,
+		&user.Name,
+		&user.Email,
+		&user.Password,
+		&user.ProfilePicture,
+		&user.CreatedAt,
+		&user.UpdatedAt,
+	)
 }
 
 func (repository *UserRepository) GetUserByEmail(ctx context.Context, email string) (*entity.User, error) {

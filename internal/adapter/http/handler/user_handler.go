@@ -2,7 +2,6 @@ package handler
 
 import (
 	"net/http"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	entity "main.go/internal/domain/entity"
@@ -62,7 +61,6 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 		Email:          req.Email,
 		Password:       req.Password,
 		ProfilePicture: req.ProfilePicture,
-		CreatedAt:      time.Now(),
 	}
 
 	if err := h.createUserUC.Execute(c.Request.Context(), user); err != nil {

@@ -23,7 +23,7 @@ case "$1" in
     migrate -database "$DATABASE_URL" -path internal/infra/database/migrations up
     ;;
   down)
-    migrate -database "$DATABASE_URL" -path internal/infra/database/migrations down 1
+    migrate -database "$DATABASE_URL" -path internal/infra/database/migrations down 2
     ;;
   create)
     read -p "Migration name: " name
