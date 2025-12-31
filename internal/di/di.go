@@ -68,11 +68,13 @@ func NewContainer() *Container {
 	auth_logoutUserUC := auth.NewLogoutUserUseCase(*auth_repository)
 	auth_ssoRefreshTokenUC := auth.NewRefreshTokenUseCase(*auth_repository)
 	auth_tokenMakerUC := auth.NewTokenMakerUseCase(*auth_repository)
+	auth_meUC := auth.NewMeUseCase(*auth_repository)
 	authHandler := handler.NewAuthHandler(
 		auth_loginUserUC,
 		auth_logoutUserUC,
 		auth_ssoRefreshTokenUC,
 		auth_tokenMakerUC,
+		auth_meUC,
 	)
 
 	session_repository := repository.NewSessionRepository(dbPool)

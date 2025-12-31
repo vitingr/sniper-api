@@ -23,4 +23,5 @@ type AuthRepository interface {
 	LogoutUser(ctx context.Context, session_id string) (error)
 	SSORefreshToken(ctx context.Context, refresh_token string) (*repository.SSORefreshAccessTokenResponse, error)
 	NewTokenMaker(ctx context.Context) (*jwt.Jwt, error)
+	Me(ctx context.Context, access_token string) (*entity.User, error)
 }

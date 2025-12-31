@@ -180,3 +180,32 @@ func (repository *AuthRepository) LogoutUser(ctx context.Context, session_id str
 func (repository *AuthRepository) NewTokenMaker(ctx context.Context) *jwt.Jwt {
 	return jwt.NewJwt(repository.secret_key)
 }
+
+func (repository *AuthRepository) Me(ctx context.Context, access_token string) (*entity.User, error) {
+	token_maker := jwt.NewJwt(repository.secret_key)
+
+	claims, err := token_maker.VerifyToken(access_token)
+	if err != nil {
+		logger.Error("Invalid access token.")
+		return nil, err
+	}
+
+	query := `SELECT id, name, email, profile_picture FROM users WHERE id = $1`
+
+	user := &entity.User{}
+	err = repository.db.QueryRow(ctx, query, claims.RegisteredClaims.ID).Scan(
+		&user.ID,
+		&user.Name,
+		&user.Email,
+		&user.ProfilePicture,
+	)
+
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, errors.New("User not found.")
+		}
+		return nil, err
+	}
+
+	return user, nil
+}

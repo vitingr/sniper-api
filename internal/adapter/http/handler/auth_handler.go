@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
 	"main.go/internal/adapter/repository"
@@ -14,6 +15,7 @@ type AuthHandler struct {
 	logoutUserUC      *auth.LogoutUserUseCase
 	ssoRefreshTokenUC *auth.RefreshTokenUseCase
 	tokenMakerUC      *auth.TokenMakerUseCase
+	meUC              *auth.MeUseCase
 }
 
 func NewAuthHandler(
@@ -21,12 +23,14 @@ func NewAuthHandler(
 	logoutUserUC *auth.LogoutUserUseCase,
 	ssoRefreshTokenUC *auth.RefreshTokenUseCase,
 	tokenMakerUC *auth.TokenMakerUseCase,
+	meUC *auth.MeUseCase,
 ) *AuthHandler {
 	return &AuthHandler{
 		loginUserUC:       loginUserUC,
 		logoutUserUC:      logoutUserUC,
 		ssoRefreshTokenUC: ssoRefreshTokenUC,
 		tokenMakerUC:      tokenMakerUC,
+		meUC:              meUC,
 	}
 }
 
@@ -51,9 +55,49 @@ func (h *AuthHandler) LoginUser(c *gin.Context) {
 		return
 	}
 
+	isProduction := os.Getenv("APP_ENV") == "production"
+
+	if isProduction {
+		c.SetSameSite(http.SameSiteLaxMode)
+	} else {
+		c.SetSameSite(http.SameSiteNoneMode)
+	}
+
+	c.SetCookie(
+		"access_token",
+		response.AccessToken,
+		3600,
+		"/",
+		"",
+		isProduction,
+		true,
+	)
+
+	c.SetCookie(
+		"refresh_token",
+		response.RefreshToken,
+		7*24*3600,
+		"/",
+		"",
+		isProduction,
+		true,
+	)
+
+	c.SetCookie(
+		"session_id",
+		response.SessionID,
+		7*24*3600,
+		"/",
+		"",
+		isProduction,
+		true,
+	)
+
 	c.JSON(http.StatusOK, gin.H{
 		"message": "User logged successfully!",
-		"data":    response,
+		"data": gin.H{
+			"user": response.User,
+		},
 	})
 }
 
@@ -73,29 +117,75 @@ func (h *AuthHandler) LogoutUser(c *gin.Context) {
 		return
 	}
 
+	isProduction := os.Getenv("APP_ENV") == "production"
+
+	if isProduction {
+		c.SetSameSite(http.SameSiteLaxMode)
+	} else {
+		c.SetSameSite(http.SameSiteNoneMode)
+	}
+
+	c.SetCookie("access_token", "", -1, "/", "", isProduction, true)
+	c.SetCookie("refresh_token", "", -1, "/", "", isProduction, true)
+	c.SetCookie("session_id", "", -1, "/", "", isProduction, true)
+
 	c.JSON(http.StatusOK, gin.H{
-		"message": "User logged successfully",
+		"message": "Successfully logout!",
 	})
 }
 
 // POST /v1/auth/sso/refresh-token
 func (h *AuthHandler) SSORefreshToken(c *gin.Context) {
-	var req repository.SSORefreshAccessTokenRequest
-
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	refresh_token, err := c.Cookie("refresh_token")
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "refresh token not found"})
 		return
 	}
 
-	refreshed_session, err := h.ssoRefreshTokenUC.Execute(c.Request.Context(), req.RefreshToken)
+	refreshed_session, err := h.ssoRefreshTokenUC.Execute(c.Request.Context(), refresh_token)
 
 	if err != nil {
 		logger.Error("Error at refresh access token.")
 		return
 	}
 
+	isProduction := os.Getenv("APP_ENV") == "production"
+
+	if isProduction {
+		c.SetSameSite(http.SameSiteLaxMode)
+	} else {
+		c.SetSameSite(http.SameSiteNoneMode)
+	}
+
+	c.SetCookie(
+		"access_token",
+		refreshed_session.AccessToken,
+		3600,
+		"/",
+		"",
+		isProduction,
+		true,
+	)
+
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Access token refreshed successfully",
-		"data":    refreshed_session,
+	})
+}
+
+func (h *AuthHandler) Me(c *gin.Context) {
+	accessToken, err := c.Cookie("access_token")
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "No active session."})
+		return
+	}
+
+	user, err := h.meUC.Execute(c.Request.Context(), accessToken)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid or expired token"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"data": user,
 	})
 }

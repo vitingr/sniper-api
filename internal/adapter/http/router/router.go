@@ -45,6 +45,7 @@ func (r *Router) Setup() *gin.Engine {
 		}
 		auth := v1.Group("/auth")
 		{
+			auth.GET("/me", r.container.AuthHandler.Me)
 			auth.POST("/sso/login", r.container.AuthHandler.LoginUser)
 			auth.POST("/sso/logout", r.container.AuthHandler.LogoutUser)
 			auth.POST("/sso/refresh-token", r.container.AuthHandler.SSORefreshToken)
