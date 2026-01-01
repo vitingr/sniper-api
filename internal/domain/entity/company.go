@@ -23,6 +23,10 @@ type Company struct {
 	Industry      string `json:"industry,omitempty"`
 	LinkedInURL   string `json:"linkedin_url"`
 
+	PhotoURL            string `json:"photo_url"`
+	IconMaskBaseURI     string `json:"icon_mask_base_uri"`
+	IconBackgroundColor string `json:"icon_background_color"`
+
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
