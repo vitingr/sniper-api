@@ -8,6 +8,7 @@ import (
 	"main.go/internal/adapter/repository"
 	"main.go/internal/infra/database/postgres"
 	"main.go/internal/infra/google"
+	"main.go/internal/infra/hunter"
 	"main.go/internal/usecase/auth"
 	company "main.go/internal/usecase/companies"
 	"main.go/internal/usecase/session"
@@ -44,10 +45,14 @@ func NewContainer() *Container {
 		logger.Fatal("Failed to connect to database")
 	}
 
+	hunterAPIKey := os.Getenv("HUNTER_API_KEY")
+	hunterClient := hunter.NewHunterClient(hunterAPIKey)
+
 	company_repository := google.NewGooglePlaceRepository(apiKey)
 	company_nearbyUC := company.NewGetNearbyCompaniesUseCase(company_repository)
-	company_getByIDUC := company.NewGetCompanyByIDUseCase(company_repository)
-	companyHandler := handler.NewCompanyHandler(company_getByIDUC, company_nearbyUC)
+	company_getByIDUC := company.NewGetCompanyByIDUseCase(company_repository, hunterClient)
+	company_searchUC := company.NewSearchCompaniesUseCase(company_repository)
+	companyHandler := handler.NewCompanyHandler(company_getByIDUC, company_nearbyUC, company_searchUC)
 
 	user_repository := repository.NewUserRepository(dbPool)
 	user_createUserUC := user.NewCreateUserUseCase(*user_repository)

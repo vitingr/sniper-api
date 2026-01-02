@@ -11,15 +11,18 @@ import (
 type CompanyHandler struct {
 	getByIDUC   *company.GetCompanyByIDUseCase
 	getNearbyUC *company.GetNearbyCompaniesUseCase
+	searchUC    *company.SearchCompaniesUseCase
 }
 
 func NewCompanyHandler(
 	getByIDUC *company.GetCompanyByIDUseCase,
 	getNearbyUC *company.GetNearbyCompaniesUseCase,
+	searchUC *company.SearchCompaniesUseCase,
 ) *CompanyHandler {
 	return &CompanyHandler{
 		getByIDUC:   getByIDUC,
 		getNearbyUC: getNearbyUC,
+		searchUC:    searchUC,
 	}
 }
 
@@ -29,6 +32,8 @@ func (h *CompanyHandler) GetCompanies(c *gin.Context) {
 	latStr := c.Query("lat")
 	lngStr := c.Query("lng")
 	radiusStr := c.Query("radius")
+	keyword := c.Query("keyword")
+	category := c.Query("category")
 	fetchAllStr := c.DefaultQuery("fetch_all", "false")
 	pageToken := c.Query("page_token")
 
@@ -41,6 +46,33 @@ func (h *CompanyHandler) GetCompanies(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "latitude and longitude are required and must be valid numbers",
 		})
+
+		return
+	}
+
+	if radius <= 0 {
+		radius = 800.0
+	}
+
+	if keyword != "" || category != "" {
+		input := company.SearchCompaniesInput{
+			Latitude:  lat,
+			Longitude: lng,
+			RadiusKm:  radius,
+			Keyword:   keyword,
+			Category:  category,
+		}
+
+		companies, err := h.searchUC.Execute(c.Request.Context(), input)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"data":  companies,
+			"total": len(companies),
+		})
 		return
 	}
 
@@ -50,9 +82,6 @@ func (h *CompanyHandler) GetCompanies(c *gin.Context) {
 		RadiusKm:  radius,
 		FetchAll:  fetchAll,
 		PageToken: pageToken,
-	}
-	if input.RadiusKm <= 0 {
-		input.RadiusKm = 5.0 // Default 5km
 	}
 
 	companies, err := h.getNearbyUC.Execute(c.Request.Context(), input)

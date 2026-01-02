@@ -5,6 +5,23 @@ import (
 	"time"
 )
 
+type Review struct {
+	Author      string `json:"author"`
+	Rating      int    `json:"rating"`
+	Text        string `json:"text"`
+	Time        string `json:"time"`
+	PublishTime string `json:"publish_time"`
+}
+
+type ContactEmail struct {
+	Value      string `json:"value"`
+	Type       string `json:"type"`
+	Department string `json:"department"`
+	Seniority  string `json:"seniority"`
+	Position   string `json:"position"`
+	Confidence int    `json:"confidence"`
+}
+
 type Company struct {
 	ID             string   `json:"id"`
 	Name           string   `json:"name"`
@@ -18,14 +35,20 @@ type Company struct {
 	Summary        string   `json:"summary,omitempty"`
 
 	// Enrichment by Hunter.IO
-	EmployeeCount string `json:"employee_count,omitempty"`
-	Revenue       string `json:"revenue,omitempty"`
-	Industry      string `json:"industry,omitempty"`
-	LinkedInURL   string `json:"linkedin_url"`
+	EmployeeCount   string   `json:"employee_count,omitempty"`
+	Revenue         string   `json:"revenue,omitempty"`
+	Industry        string   `json:"industry,omitempty"`
+	LinkedInURL     string   `json:"linkedin_url,omitempty"`
+	Rating          float64  `json:"rating,omitempty"`
+	UserRatingCount int      `json:"user_rating_count,omitempty"`
+	GoogleMapsURI   string   `json:"google_maps_uri,omitempty"`
+	Reviews         []Review `json:"reviews,omitempty"`
 
-	PhotoURL            string `json:"photo_url"`
-	IconMaskBaseURI     string `json:"icon_mask_base_uri"`
-	IconBackgroundColor string `json:"icon_background_color"`
+	PhotoURL            string `json:"photo_url,omitempty"`
+	IconMaskBaseURI     string `json:"icon_mask_base_uri,omitempty"`
+	IconBackgroundColor string `json:"icon_background_color,omitempty"`
+
+	Contacts []ContactEmail `json:"contacts,omitempty"`
 
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
